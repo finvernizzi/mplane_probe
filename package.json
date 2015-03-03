@@ -1,6 +1,6 @@
 {
   "name": "mplane_probe",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "mPlane generic active probe-",
   "main": "probe.js",
   "scripts": {
@@ -22,14 +22,14 @@
   },
   "homepage": "https://github.com/finvernizzi/mplane_probe",
   "dependencies": {
-    "fs": "0.0.2",
-    "lodash": "^3.3.0",
-    "cli": "^0.6.5",
-    "mplane": "^0.5.7-a",
-    "mplane_http_transport": "^0.1.12",
-    "url": "^0.10.2",
-    "async": "^0.9.0",
-    "dns-sync": "^0.1.1"
+    "fs": ">=0.0.2",
+    "lodash": ">=3.3.0",
+    "cli": ">=0.6.5",
+    "mplane": ">=0.5.7",
+    "mplane_http_transport": ">=0.1.12",
+    "url": ">=0.10.2",
+    "async": ">=0.9.0",
+    "dns-sync": ">=0.1.1"
   },
   "devDependencies": {}
 }
