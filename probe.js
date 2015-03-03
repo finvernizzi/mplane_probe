@@ -4,7 +4,7 @@
  * @author fabrizio.invernizzi@telecomitalia.it
  * @version 0.2.0
  *
- * 23022015	Now it is the mPlane probe with multiple capability
+ * 2302_2015	mPlane probe with multiple capability
  */
 
 var exec = require('child_process').exec,
@@ -14,13 +14,13 @@ var exec = require('child_process').exec,
     url = require('url'),
     async = require("async")
     ,fs = require('fs')
-    ,cli = require("cli")
+    ,cli = require("cli").enable('status')
     ,http = require('http');
 
-var CONFIGFILE = "probe.json"; //TODO:This should be overwrittable by cli
+var CONFIGFILE = "probe.json"; 
 
 //-----------------------------------------------------------------------------------------------------------
-// READ CONFIG
+// READ CONFIG and CLI params
 var configuration;
 try {
     configuration = JSON.parse(fs.readFileSync(CONFIGFILE));
@@ -30,31 +30,37 @@ catch (err) {
     console.log(err);
     process.exit();
 }
-//-----------------------------------------------------------------------------------------------------------
-
 
 // CLI params
 cli.parse({
     sourceIP:['i' , 'Source IP' , 'string' , configuration.main.ipAdresses[0]],
     platform:['p' , 'Platform (BSD,MAC,LINUX)' , 'string' , configuration.main.platform],
     systemID:['s' , 'System identification' , 'string' , configuration.main.systemID],
-    label:['l' , 'System label' , 'string' , configuration.main.label]
+    label:['l' , 'System label' , 'string' , configuration.main.label],
+    registry:['r' , 'Registry URL' , 'url' , configuration.registry.url]
 });
+
+if (!cli.options.sourceIP){
+	cli.fatal("You should specify the source address!");
+}
+//-----------------------------------------------------------------------------------------------------------
 
 var connected = false;
 var capability = [];
 
 // Initialize available primitives from the registry
-mplane.Element.initialize_registry("registry.json");
+mplane.Element.initialize_registry(cli.options.registry);
 
 var pingCapability = new mplane.Capability();
 pingCapability.set_when("now ... future / 1s");
+//.add_parameter({
+//    type:"number",
+//    constraints:"1 ... 10"
+//})
+
 pingCapability.add_parameter({
     type:"destination.ip4",
     constraints:configuration.pinger.constraints
-}).add_parameter({
-    type:"number",
-    constraints:"1 ... 10"
 }).add_parameter({
         type:"source.ip4",
         constraints:cli.options.sourceIP
@@ -83,7 +89,7 @@ capability.push(traceCapability);
 var httpLatencyCapability = new mplane.Capability();
 httpLatencyCapability.set_when("now ... future / 1s");
 httpLatencyCapability.add_parameter({
-    type:"destination.fqdn",
+    type:"destination.link",
     constraints:configuration.pinger.constraints
 }).add_parameter({
         type:"source.ip4",
@@ -111,7 +117,7 @@ var recheck = setInterval(function(){
 } , configuration.main.retryConnect);
 
 function pushCapPullSpec(capabilities){
-    console.log("***************************");
+	console.log("***************************");
     console.log("REGISTERING MY CAPABILITIES");
     console.log("***************************\n");
     supervisor.registerCapabilities(capabilities , {
@@ -120,6 +126,7 @@ function pushCapPullSpec(capabilities){
             ,caFile: configuration.ssl.ca
             ,keyFile: configuration.ssl.key
             ,certFile: configuration.ssl.cert
+            ,debug: false
         },function(err , data){
             if (err){
                 return false;
@@ -187,7 +194,7 @@ function mean(values){
  */
 function execPing(specification, mainCallback){
     var dest = specification.get_parameter_value("destination.ip4");
-    var reqNum = specification.get_parameter_value("number");
+    var reqNum = specification.get_parameter_value("number") || 5;
     var startAction = new Date();
     cli.info("Something to do for me...("+dest+","+reqNum+")");
     async.waterfall([
@@ -220,11 +227,10 @@ function execPing(specification, mainCallback){
  * @param specification The mplane Specification
  */
 function execHTTPLatency(specification, mainCallback){
-    var dest = specification.get_parameter_value("destination.fqdn");
+    var dest = specification.get_parameter_value("destination.link");
     var startAction = new Date();
  
     cli.info("Something to do for me...(HTTP Latency: "+dest+")");
-    //function(callback){
         var start = new Date();
 		http.get({host: dest, port: 80}, function(res) {
 			meanRTT = new Date() - start;
@@ -246,7 +252,6 @@ function execHTTPLatency(specification, mainCallback){
             	}
         	); //supervisor.registerResult
 		});
-    //}
 }
 
 
