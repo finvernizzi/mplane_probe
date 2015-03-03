@@ -53,10 +53,6 @@ mplane.Element.initialize_registry(cli.options.registry);
 
 var pingCapability = new mplane.Capability();
 pingCapability.set_when("now ... future / 1s");
-//.add_parameter({
-//    type:"number",
-//    constraints:"1 ... 10"
-//})
 
 pingCapability.add_parameter({
     type:"destination.ip4",
