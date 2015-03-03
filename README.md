@@ -56,11 +56,14 @@ Configuration of this probe can be done in probe.json
         ,"cert": "./ssl/official/Component1/Component-1.crt.pem"
         ,"ca": [ "./ssl/official/root-ca.pem" , "./ssl/official/signing-ca.pem" ]
         ,"requestCert" : true
+    },
+    "registry":{
+		"url": "file://../registry.json"
     }
 }
 ```
 
-The implementation is very simple, and tested only on FreeBSD 9.3, so some changes may be required in order to fully work on other platform.
+The implementation is very simple, and tested on FreeBSD (9.3) and Ubuntu 10.4, so some changes may be required in order to fully work on other platform.
 In particular two functions should be checked:
 - doAPing. This function executes the ping with parameters received in Specifications. The command is 
        ```javascript exec("ping -S " + __MY_IP__ + "  -W "+ Wait  +" -c " + requests + " " + destination  + " | grep from"```
