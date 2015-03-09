@@ -1,0 +1,36 @@
+{
+    "main":{
+        "logFile":"/var/log/mplane/probe.log",
+        "retryConnect":5000,
+        "ceckSpecificationPeriod":5000,
+        "pingerLabel": "pinger_Service_Node",
+        "tracerouteLabel": "tracer_Service_Node",
+        "httpLatencyLabel": "http_latency_Service_Node",
+        "ipAdresses" : ["192.168.43.189"],
+        "tracerouteExec": "/usr/sbin/traceroute",
+	"platform":"MAC",
+        "__tracerouteOptions": "-n -i 1 -c 5",
+        "tracerouteOptions": "-n ",
+        "systemID":"Service node"
+    },
+    "supervisor":{
+        "host": "Supervisor-1.TI.mplane.org",
+        "port": 2427
+    },
+    "pinger":{
+        "constraints":"0.0.0.0 ... 255.255.255.255"
+    },
+    "traceroute":{
+        "constraints":"0.0.0.0 ... 255.255.255.255"
+    },
+    "ssl":{
+	"key": "../ca/certs/Component-SSB-plaintext.key"
+        ,"cert": "../ca/certs/Component-SSB.crt"
+        ,"ca": [ "../ca/root-ca/root-ca.crt" ]
+        ,"requestCert" : true
+    },
+    "registry":{
+	"__url": "https://raw.githubusercontent.com/fp7mplane/protocol-ri/master/mplane/registry.json",
+	"url": "file:///Users/invernizzi/Documents/mplane/registry.json"
+    }
+}

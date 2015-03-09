@@ -31,6 +31,16 @@ catch (err) {
     process.exit();
 }
 
+// PM2 soft reload
+process.on("message", function(message) {
+    if(message == "shutdown") {
+        dumpStatus(function(){
+			console.log("\nNothing more to do here, BYE!");
+			process.exit();
+		});
+    }
+});
+
 // CLI params
 cli.parse({
     sourceIP:['i' , 'Source IP' , 'string' , configuration.main.ipAdresses[0]],
@@ -270,11 +280,12 @@ function execTraceroute(specification, mainCallback){
             });
         }
     ], function (err, hops) {
-        if (err){
-            console.log(err);
+        if (err | !hops){
+        	if (err)
+            	console.log(err);
         }else{
     	    cli.info("Something to do for me...("+dest+")");
-	    specification.set_when(startAction.toISOString() + " ... " + new Date().toISOString());
+	    	specification.set_when(startAction.toISOString() + " ... " + new Date().toISOString());
             supervisor.registerResult(
                 specification
                 , {
