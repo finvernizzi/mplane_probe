@@ -40,26 +40,36 @@ Configuration of this probe can be done in probe.json
 ```json
 {
     "main":{
-        "logFile":"/var/log/mplane/pinger.log",
+        "logFile":"/var/log/mplane/probe.log",
         "retryConnect":5000,
-        "pingerLabel": "pinger_TI_test",
-        "tracerouteLabel": "tracer_TI_test",
-        "ipAdresses" : ["192.168.0.1"],
+        "ceckSpecificationPeriod":5000,
+        "pingerLabel": "TI_active_probe",
+        "tracerouteLabel": "tracer_Service_Node",
+        "httpLatencyLabel": "http_latency_Service_Node",
+        "ipAdresses" : ["192.168.43.189"],
         "tracerouteExec": "/usr/sbin/traceroute",
-        "tracerouteOptions": "-q1 -n -w1 -m5"
+        "platform":"MAC",
+        "tracerouteOptions": "-n ",
+        "systemID":"Service node"
     },
     "supervisor":{
-        "host": "mplane.org",
+        "host": "supervisor.ict-mplane.eu",
         "port": 2427
     },
+    "pinger":{
+        "constraints":"0.0.0.0 ... 255.255.255.255"
+    },
+    "traceroute":{
+        "constraints":"0.0.0.0 ... 255.255.255.255"
+    },
     "ssl":{
-        "key": "./ssl/official/Component1/Component-1-plaintext.key"
-        ,"cert": "./ssl/official/Component1/Component-1.crt.pem"
-        ,"ca": [ "./ssl/official/root-ca.pem" , "./ssl/official/signing-ca.pem" ]
+        "key": "../certs/probes/Probe_TI-plaintext.key"
+        ,"cert": "../certs/probes/Probe_TI.crt"
+        ,"ca": [ "../certs/ca/root-ca.crt" ]
         ,"requestCert" : true
     },
     "registry":{
-		"url": "file://../registry.json"
+        "url": "http://www.ict-mplane.eu/registry/demo",
     }
 }
 ```
