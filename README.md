@@ -17,7 +17,8 @@ For security reasons you SHOULD update these files with your own certificates.
 #Installation
 Get all the code from github
 
-```git clone https://github.com/finvernizzi/mplane_probe.git
+```
+git clone https://github.com/finvernizzi/mplane_probe.git
 ```
 
 
